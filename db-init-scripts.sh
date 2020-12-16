@@ -1,0 +1,1 @@
+psql -U docker -d postgres -f /var/lib/postgresql/backup.sql

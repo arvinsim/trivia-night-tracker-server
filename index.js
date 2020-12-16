@@ -9,14 +9,13 @@ const typeDefs = gql`
     type Score {
         id: Int
         score: Int
-        playerId: Int
         dateCreated: Date
     }
     
     type Player {
         id: Int   
         name: String
-        
+        scores: [Score]
     }
 
     # The "Query" type is special: it lists all of the available queries that
@@ -28,3 +27,14 @@ const typeDefs = gql`
         scores: [Score]
     }
 `;
+
+const players = [
+    {
+      id: 1,
+      name: 'Kate Chopin',
+    },
+    {
+      id: 2,
+      name: 'Paul Auster',
+    },
+  ];
