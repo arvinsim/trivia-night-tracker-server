@@ -23,7 +23,6 @@ const typeDefs = gql`
     # clients can execute, along with the return type for each. In this
     # case, the "books" query returns an array of zero or more Books (defined above).
     type Query {
-        # books: [Book]
         players: [Player]
         scores: [Score]
     }
@@ -38,6 +37,13 @@ const players = [
     {
       id: 2,
       name: 'Paul Auster',
+      scores: [
+        {
+          id: 2,
+          score: 222,
+          dateCreated: 1608219972 
+        }
+      ]
     },
   ];
 
