@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require("apollo-server");
+// const util = require("util");
 
 const POSTGRES_VERSION = "13.1";
 const POSTGRES_HOST = "127.0.0.1";
@@ -27,7 +28,6 @@ const typeDefs = gql`
   type Score {
     id: Int
     score: Int
-    playerId: Int
     dateCreated: Date
   }
 
@@ -64,12 +64,41 @@ async function getScores() {
 
 async function getPlayers() {
   try {
-    return await pg
-      .select("players.id as id", "name", "scores.score as score")
+    const players = await pg
+      .select(
+        "players.id as id",
+        "name",
+        "scores.id as scoreId",
+        "scores.score as score",
+        "scores.date_created as dateCreated"
+      )
       .from("players")
       .leftJoin("scores", "players.id", "scores.player_id");
+
+    let normalizedData = {};
+    for (const player of players) {
+      if (normalizedData[player.id] && normalizedData[player.id]["scores"]) {
+        normalizedData[player.id]["scores"].push({
+          id: player.scoreId,
+          score: player.score,
+          dateCreated: player.dateCreated,
+        });
+      } else {
+        normalizedData[player.id] = {
+          id: player.id,
+          name: player.name,
+          scores: [],
+        };
+      }
+    }
+
+    let data = [];
+    for (const key in normalizedData) {
+      data.push(normalizedData[key]);
+    }
+    return data;
   } catch (error) {
-    console.log("Error getting scores");
+    console.log("Error getting players");
     return [];
   }
 }
