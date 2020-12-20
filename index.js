@@ -48,7 +48,7 @@ const typeDefs = gql`
 
 async function getScores() {
   try {
-    const result = await pg
+    return await pg
       .select(
         "id",
         "score",
@@ -56,13 +56,25 @@ async function getScores() {
         "date_created as dateCreated"
       )
       .from("scores");
-    return result;
   } catch (error) {
     console.log("Error getting scores");
     return [];
   }
 }
 
+async function getPlayers() {
+  try {
+    return await pg
+      .select("players.id as id", "name", "scores.score as score")
+      .from("players")
+      .leftJoin("scores", "players.id", "scores.player_id");
+  } catch (error) {
+    console.log("Error getting scores");
+    return [];
+  }
+}
+
+/*
 const players = [
   {
     id: 1,
@@ -81,12 +93,13 @@ const players = [
     ],
   },
 ];
+ */
 
 // Resolvers define the technique for fetching the types defined in the
 // schema. This resolver retrieves books from the "books" array above.
 const resolvers = {
   Query: {
-    players: () => players,
+    players: getPlayers,
     scores: getScores,
   },
 };
